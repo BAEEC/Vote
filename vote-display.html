@@ -1,0 +1,433 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ประกวดดาว&เดือน 2568</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Mitr:wght@300;400;500;600&family=Kanit:wght@300;400;600;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --gold: #F5C842;
+    --gold-dark: #C49A1A;
+    --bg: #0A0A12;
+    --bg2: #111120;
+    --bg3: #181830;
+    --card: #14142A;
+    --border: rgba(245,200,66,0.18);
+    --text: #F0EDE6;
+    --muted: rgba(240,237,230,0.45);
+    --star1: #F5C842;
+    --star2: #7EB8F7;
+    --star3: #A8E6A3;
+    --rank1: linear-gradient(135deg,#F5C842 0%,#C49A1A 100%);
+    --rank2: linear-gradient(135deg,#B8C8D8 0%,#7A8FA0 100%);
+    --rank3: linear-gradient(135deg,#D4956A 0%,#9B5E30 100%);
+  }
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: 'Mitr', sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
+
+  /* Stars background */
+  body::before {
+    content: '';
+    position: fixed; inset: 0;
+    background-image:
+      radial-gradient(1px 1px at 10% 15%, rgba(255,255,255,0.6) 0%, transparent 100%),
+      radial-gradient(1px 1px at 25% 40%, rgba(255,255,255,0.4) 0%, transparent 100%),
+      radial-gradient(1.5px 1.5px at 40% 8%, rgba(245,200,66,0.5) 0%, transparent 100%),
+      radial-gradient(1px 1px at 55% 60%, rgba(255,255,255,0.5) 0%, transparent 100%),
+      radial-gradient(1px 1px at 70% 25%, rgba(255,255,255,0.3) 0%, transparent 100%),
+      radial-gradient(1.5px 1.5px at 80% 75%, rgba(126,184,247,0.5) 0%, transparent 100%),
+      radial-gradient(1px 1px at 90% 45%, rgba(255,255,255,0.4) 0%, transparent 100%),
+      radial-gradient(1px 1px at 15% 80%, rgba(255,255,255,0.3) 0%, transparent 100%),
+      radial-gradient(1px 1px at 60% 90%, rgba(255,255,255,0.5) 0%, transparent 100%),
+      radial-gradient(1.5px 1.5px at 35% 70%, rgba(245,200,66,0.3) 0%, transparent 100%);
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  .wrap { position: relative; z-index: 1; max-width: 720px; margin: 0 auto; padding: 2rem 1rem 4rem; }
+
+  /* Header */
+  .header { text-align: center; margin-bottom: 2.5rem; }
+  .crown { font-size: 48px; line-height: 1; margin-bottom: 0.5rem; animation: float 3s ease-in-out infinite; }
+  @keyframes float { 0%,100%{transform:translateY(0)} 50%{transform:translateY(-8px)} }
+
+  .title {
+    font-family: 'Kanit', sans-serif;
+    font-size: clamp(28px, 6vw, 44px);
+    font-weight: 700;
+    color: var(--gold);
+    letter-spacing: 1px;
+    line-height: 1.1;
+  }
+  .subtitle { font-size: 15px; color: var(--muted); margin-top: 6px; letter-spacing: 0.5px; }
+
+  .live-badge {
+    display: inline-flex; align-items: center; gap: 6px;
+    background: rgba(245,200,66,0.1);
+    border: 1px solid var(--border);
+    border-radius: 99px;
+    padding: 4px 14px;
+    font-size: 13px;
+    color: var(--gold);
+    margin-top: 12px;
+  }
+  .dot { width: 7px; height: 7px; border-radius: 50%; background: #E24B4A; animation: pulse 1.4s infinite; }
+  @keyframes pulse { 0%,100%{opacity:1;transform:scale(1)} 50%{opacity:0.4;transform:scale(0.8)} }
+
+  /* Stats bar */
+  .stats { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 10px; margin-bottom: 2rem; }
+  .stat-card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    padding: 14px 12px;
+    text-align: center;
+  }
+  .stat-val { font-size: 22px; font-weight: 600; color: var(--gold); }
+  .stat-label { font-size: 12px; color: var(--muted); margin-top: 2px; }
+
+  /* Timer */
+  .timer-row { text-align: center; margin-bottom: 2rem; }
+  .timer-label { font-size: 13px; color: var(--muted); margin-bottom: 6px; }
+  .timer { font-family: 'Kanit', sans-serif; font-size: 32px; font-weight: 600; color: var(--text); letter-spacing: 4px; }
+  .timer span { color: var(--gold); }
+
+  /* Candidates */
+  .section-label { font-size: 13px; color: var(--muted); letter-spacing: 1px; margin-bottom: 12px; }
+
+  .card-list { display: flex; flex-direction: column; gap: 10px; }
+
+  .candidate-card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 16px 20px;
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    transition: transform 0.4s, border-color 0.4s;
+    animation: slideIn 0.5s ease both;
+  }
+  .candidate-card:nth-child(1) { animation-delay: 0.05s; }
+  .candidate-card:nth-child(2) { animation-delay: 0.1s; }
+  .candidate-card:nth-child(3) { animation-delay: 0.15s; }
+  .candidate-card:nth-child(4) { animation-delay: 0.2s; }
+  .candidate-card:nth-child(5) { animation-delay: 0.25s; }
+  @keyframes slideIn { from{opacity:0;transform:translateY(20px)} to{opacity:1;transform:translateY(0)} }
+
+  .candidate-card.rank-1 { border-color: rgba(245,200,66,0.5); background: linear-gradient(135deg, rgba(245,200,66,0.08), var(--card)); }
+  .candidate-card.rank-2 { border-color: rgba(184,200,216,0.35); }
+  .candidate-card.rank-3 { border-color: rgba(212,149,106,0.35); }
+
+  .rank-num {
+    font-family: 'Kanit', sans-serif;
+    font-size: 28px;
+    font-weight: 700;
+    min-width: 44px;
+    text-align: center;
+    line-height: 1;
+  }
+  .rank-1 .rank-num { background: var(--rank1); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+  .rank-2 .rank-num { background: var(--rank2); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+  .rank-3 .rank-num { background: var(--rank3); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+  .rank-other .rank-num { color: var(--muted); font-size: 22px; }
+
+  .avatar {
+    width: 54px; height: 54px; border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-family: 'Kanit', sans-serif;
+    font-size: 20px; font-weight: 700;
+    flex-shrink: 0;
+    border: 2px solid transparent;
+  }
+  .rank-1 .avatar { background: rgba(245,200,66,0.2); border-color: rgba(245,200,66,0.5); color: var(--gold); }
+  .rank-2 .avatar { background: rgba(184,200,216,0.15); border-color: rgba(184,200,216,0.4); color: #B8C8D8; }
+  .rank-3 .avatar { background: rgba(212,149,106,0.15); border-color: rgba(212,149,106,0.4); color: #D4956A; }
+  .rank-other .avatar { background: rgba(240,237,230,0.06); border-color: rgba(240,237,230,0.12); color: var(--muted); }
+
+  .info { flex: 1; min-width: 0; }
+  .name { font-size: 16px; font-weight: 500; color: var(--text); }
+  .votes-txt { font-size: 12px; color: var(--muted); margin-top: 2px; }
+
+  .bar-wrap { margin-top: 8px; background: rgba(255,255,255,0.06); border-radius: 99px; height: 6px; overflow: hidden; }
+  .bar { height: 100%; border-radius: 99px; transition: width 1.2s cubic-bezier(0.4,0,0.2,1); }
+  .rank-1 .bar { background: linear-gradient(90deg, #C49A1A, #F5C842); }
+  .rank-2 .bar { background: linear-gradient(90deg, #7A8FA0, #B8C8D8); }
+  .rank-3 .bar { background: linear-gradient(90deg, #9B5E30, #D4956A); }
+  .rank-other .bar { background: rgba(240,237,230,0.25); }
+
+  .score-box { text-align: right; flex-shrink: 0; }
+  .score { font-family: 'Kanit', sans-serif; font-size: 26px; font-weight: 700; color: var(--text); line-height: 1; }
+  .rank-1 .score { color: var(--gold); }
+  .score-unit { font-size: 11px; color: var(--muted); margin-top: 2px; }
+  .money-txt { font-size: 12px; color: var(--muted); margin-top: 2px; }
+
+  /* Footer */
+  .footer { text-align: center; margin-top: 3rem; }
+  .update-txt { font-size: 12px; color: var(--muted); }
+  .refresh-note { font-size: 12px; color: rgba(245,200,66,0.5); margin-top: 4px; }
+
+  /* Config section (สำหรับตั้งค่า Sheet ID) */
+  .config-bar {
+    background: rgba(245,200,66,0.06);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 14px 16px;
+    margin-bottom: 1.5rem;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    flex-wrap: wrap;
+  }
+  .config-bar label { font-size: 13px; color: var(--muted); white-space: nowrap; }
+  .config-bar input {
+    flex: 1; min-width: 200px;
+    background: rgba(0,0,0,0.3);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 7px 12px;
+    font-family: 'Mitr', sans-serif;
+    font-size: 13px;
+    color: var(--text);
+    outline: none;
+  }
+  .config-bar input:focus { border-color: var(--gold); }
+  .btn-load {
+    background: var(--gold);
+    color: #1A1200;
+    border: none;
+    border-radius: 8px;
+    padding: 8px 18px;
+    font-family: 'Mitr', sans-serif;
+    font-size: 13px;
+    font-weight: 500;
+    cursor: pointer;
+    white-space: nowrap;
+  }
+  .btn-load:hover { background: #e0b530; }
+  .data-mode { font-size: 11px; color: var(--muted); text-align: center; margin-bottom: 1rem; }
+  .data-mode span { color: var(--gold); }
+
+  @media (max-width: 480px) {
+    .stats { grid-template-columns: 1fr 1fr; }
+    .stat-card:last-child { grid-column: span 2; }
+    .candidate-card { padding: 12px 14px; gap: 10px; }
+    .avatar { width: 44px; height: 44px; font-size: 16px; }
+    .score { font-size: 22px; }
+    .rank-num { font-size: 22px; min-width: 32px; }
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <div class="header">
+    <div class="crown">👑</div>
+    <h1 class="title">ประกวดดาว &amp; เดือน</h1>
+    <p class="subtitle">มหาวิทยาลัย · ปีการศึกษา 2568</p>
+    <div class="live-badge"><span class="dot"></span> Live Ranking</div>
+  </div>
+
+  <!-- Config: ใส่ Sheet ID ที่นี่ -->
+  <div class="config-bar">
+    <label>Google Sheet ID:</label>
+    <input type="text" id="sheet-id" placeholder="วาง Sheet ID ของคุณที่นี่..." value="">
+    <button class="btn-load" onclick="loadFromSheet()">โหลดข้อมูล</button>
+  </div>
+  <p class="data-mode" id="mode-label">โหมด: <span>ข้อมูลจำลอง</span> (ใส่ Sheet ID เพื่อดึงข้อมูลจริง)</p>
+
+  <!-- Countdown -->
+  <div class="timer-row">
+    <div class="timer-label">เหลือเวลาโหวต</div>
+    <div class="timer" id="countdown"><span>00</span>:<span>00</span>:<span>00</span></div>
+  </div>
+
+  <!-- Stats -->
+  <div class="stats">
+    <div class="stat-card">
+      <div class="stat-val" id="total-score">0</div>
+      <div class="stat-label">คะแนนรวมทั้งหมด</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-val" id="total-voters">0</div>
+      <div class="stat-label">ผู้ร่วมโหวต (คน)</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-val" id="total-money">0</div>
+      <div class="stat-label">ยอดรวม (บาท)</div>
+    </div>
+  </div>
+
+  <p class="section-label">🏆 อันดับคะแนน Popular Vote</p>
+  <div class="card-list" id="card-list"></div>
+
+  <div class="footer">
+    <p class="update-txt" id="update-time">กำลังโหลด...</p>
+    <p class="refresh-note">อัปเดตอัตโนมัติทุก 30 วินาที</p>
+  </div>
+</div>
+
+<script>
+// ============================================================
+//  ตั้งค่าที่นี่
+// ============================================================
+const VOTE_END_DATE = new Date('2025-11-30T20:00:00'); // วันปิดรับโหวต
+
+// ข้อมูลจำลอง (ใช้ตอนยังไม่มี Sheet)
+const MOCK_DATA = [
+  { id: 1, name: 'หมายเลข 1', score: 148, money: 1480, votes: 42 },
+  { id: 2, name: 'หมายเลข 2', score: 112, money: 1120, votes: 31 },
+  { id: 3, name: 'หมายเลข 3', score:  87, money:  870, votes: 24 },
+  { id: 4, name: 'หมายเลข 4', score:  53, money:  530, votes: 15 },
+  { id: 5, name: 'หมายเลข 5', score:  29, money:  290, votes:  9 },
+];
+// ============================================================
+
+let currentData = [...MOCK_DATA];
+let usingRealData = false;
+
+// Countdown
+function updateCountdown() {
+  const now = new Date();
+  const diff = VOTE_END_DATE - now;
+  if (diff <= 0) {
+    document.getElementById('countdown').innerHTML = '<span style="font-size:18px;color:var(--muted)">ปิดรับโหวตแล้ว</span>';
+    return;
+  }
+  const d = Math.floor(diff / 86400000);
+  const h = Math.floor((diff % 86400000) / 3600000);
+  const m = Math.floor((diff % 3600000) / 60000);
+  const s = Math.floor((diff % 60000) / 1000);
+  const pad = n => String(n).padStart(2,'0');
+  document.getElementById('countdown').innerHTML =
+    d > 0
+      ? `<span>${d}</span> วัน <span>${pad(h)}</span>:<span>${pad(m)}</span>:<span>${pad(s)}</span>`
+      : `<span>${pad(h)}</span>:<span>${pad(m)}</span>:<span>${pad(s)}</span>`;
+}
+setInterval(updateCountdown, 1000);
+updateCountdown();
+
+// Render cards
+function renderCards(data) {
+  const sorted = [...data].sort((a, b) => b.score - a.score);
+  const max = sorted[0]?.score || 1;
+
+  const totalScore  = sorted.reduce((s, d) => s + d.score, 0);
+  const totalVoters = sorted.reduce((s, d) => s + d.votes, 0);
+  const totalMoney  = sorted.reduce((s, d) => s + d.money, 0);
+
+  document.getElementById('total-score').textContent  = totalScore.toLocaleString();
+  document.getElementById('total-voters').textContent = totalVoters.toLocaleString();
+  document.getElementById('total-money').textContent  = totalMoney.toLocaleString();
+
+  const rankClass = ['rank-1','rank-2','rank-3'];
+  const medals    = ['🥇','🥈','🥉'];
+  const avatarColors = ['#F5C842','#B8C8D8','#D4956A','#7EB8F7','#A8E6A3'];
+
+  const container = document.getElementById('card-list');
+  container.innerHTML = '';
+
+  sorted.forEach((d, i) => {
+    const cls  = rankClass[i] || 'rank-other';
+    const pct  = Math.round((d.score / max) * 100);
+    const icon = i < 3 ? medals[i] : (i + 1);
+    const col  = avatarColors[d.id - 1] || '#888';
+
+    const card = document.createElement('div');
+    card.className = `candidate-card ${cls}`;
+    card.innerHTML = `
+      <div class="rank-num">${icon}</div>
+      <div class="avatar" style="${i>=3?'color:'+col:''}">No.${d.id}</div>
+      <div class="info">
+        <div class="name">${d.name}</div>
+        <div class="votes-txt">${d.votes.toLocaleString()} คน · ${d.money.toLocaleString()} บาท</div>
+        <div class="bar-wrap"><div class="bar" style="width:${pct}%"></div></div>
+      </div>
+      <div class="score-box">
+        <div class="score">${d.score.toLocaleString()}</div>
+        <div class="score-unit">คะแนน</div>
+      </div>
+    `;
+    container.appendChild(card);
+  });
+
+  const now = new Date();
+  document.getElementById('update-time').textContent =
+    'อัปเดตล่าสุด: ' + now.toLocaleString('th-TH', {hour:'2-digit',minute:'2-digit',second:'2-digit'});
+}
+
+// Mock: จำลองคะแนนขยับเล็กน้อย (เอาออกตอนใช้จริง)
+function mockTick() {
+  if (usingRealData) return;
+  currentData.forEach(d => {
+    if (Math.random() < 0.35) {
+      const add = [1, 3, 5, 10][Math.floor(Math.random() * 4)];
+      d.score += add;
+      d.money += add * 10;
+      d.votes += 1;
+    }
+  });
+  renderCards(currentData);
+}
+
+// ดึงข้อมูลจาก Google Sheets (Published as CSV)
+// วิธีใช้: File → Share → Publish to web → Sheet ที่มีข้อมูล → CSV
+// คอลัมน์ใน Sheet: A=หมายเลข, B=ชื่อ, C=คะแนน, D=เงิน, E=จำนวนคน
+async function loadFromSheet() {
+  const sheetId = document.getElementById('sheet-id').value.trim();
+  if (!sheetId) { alert('กรุณาใส่ Sheet ID ก่อน'); return; }
+
+  const url = `https://docs.google.com/spreadsheets/d/${sheetId}/gviz/tq?tqx=out:csv&sheet=Summary`;
+  try {
+    const res = await fetch(url);
+    if (!res.ok) throw new Error('โหลดไม่ได้');
+    const text = await res.text();
+    const rows = text.trim().split('\n').slice(1); // ข้าม header row
+    const parsed = rows.map(row => {
+      const cols = row.split(',').map(c => c.replace(/^"|"$/g, '').trim());
+      return {
+        id:    parseInt(cols[0]) || 0,
+        name:  cols[1] || '',
+        score: parseFloat(cols[2]) || 0,
+        money: parseFloat(cols[3]) || 0,
+        votes: parseInt(cols[4])   || 0,
+      };
+    }).filter(d => d.id > 0);
+
+    if (parsed.length === 0) throw new Error('ไม่มีข้อมูลในชีต');
+
+    currentData = parsed;
+    usingRealData = true;
+    document.getElementById('mode-label').innerHTML =
+      'โหมด: <span>ข้อมูลจริงจาก Google Sheets ✓</span>';
+    renderCards(currentData);
+  } catch (e) {
+    alert('โหลดไม่ได้: ' + e.message + '\n\nตรวจสอบ:\n1. Sheet ID ถูกต้อง\n2. Publish to web เป็น CSV แล้ว\n3. ชื่อ Sheet = "Summary"');
+  }
+}
+
+// Auto-refresh ทุก 30 วิ
+async function autoRefresh() {
+  if (usingRealData) {
+    await loadFromSheet();
+  } else {
+    mockTick();
+  }
+}
+
+// Start
+renderCards(currentData);
+setInterval(autoRefresh, 30000);
+setInterval(() => { if (!usingRealData) mockTick(); }, 4000);
+</script>
+</body>
+</html>
