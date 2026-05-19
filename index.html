@@ -142,17 +142,16 @@
   .rank-other .rank-num { color: var(--muted); font-size: 22px; }
 
   .avatar {
-    width: 54px; height: 54px; border-radius: 50%;
-    display: flex; align-items: center; justify-content: center;
-    font-family: 'Kanit', sans-serif;
-    font-size: 20px; font-weight: 700;
+    width: 64px; height: 64px; border-radius: 50%;
+    object-fit: cover;
     flex-shrink: 0;
     border: 2px solid transparent;
+    background: rgba(240,237,230,0.06);
   }
-  .rank-1 .avatar { background: rgba(245,200,66,0.2); border-color: rgba(245,200,66,0.5); color: var(--gold); }
-  .rank-2 .avatar { background: rgba(184,200,216,0.15); border-color: rgba(184,200,216,0.4); color: #B8C8D8; }
-  .rank-3 .avatar { background: rgba(212,149,106,0.15); border-color: rgba(212,149,106,0.4); color: #D4956A; }
-  .rank-other .avatar { background: rgba(240,237,230,0.06); border-color: rgba(240,237,230,0.12); color: var(--muted); }
+  .rank-1 .avatar { border-color: rgba(245,200,66,0.6); }
+  .rank-2 .avatar { border-color: rgba(184,200,216,0.5); }
+  .rank-3 .avatar { border-color: rgba(212,149,106,0.5); }
+  .rank-other .avatar { border-color: rgba(240,237,230,0.12); }
 
   .info { flex: 1; min-width: 0; }
   .name { font-size: 16px; font-weight: 500; color: var(--text); }
@@ -221,7 +220,7 @@
     .stats { grid-template-columns: 1fr 1fr; }
     .stat-card:last-child { grid-column: span 2; }
     .candidate-card { padding: 12px 14px; gap: 10px; }
-    .avatar { width: 44px; height: 44px; font-size: 16px; }
+  .avatar { width: 44px; height: 44px; }
     .score { font-size: 22px; }
     .rank-num { font-size: 22px; min-width: 32px; }
   }
@@ -282,13 +281,25 @@
 // ============================================================
 const VOTE_END_DATE = new Date('2025-11-30T20:00:00'); // วันปิดรับโหวต
 
+// ============================================================
+//  ข้อมูลผู้เข้าประกวด — แก้ตรงนี้ที่เดียว
+//  img: ใส่ชื่อไฟล์รูปใน /images/ เช่น "images/1.jpg"
+// ============================================================
+const CANDIDATES = [
+  { id: 1, name: 'นางสาวสมหมี', img: 'images/1.jpg' },
+  { id: 2, name: 'หมายเลข 2',   img: '' },
+  { id: 3, name: 'หมายเลข 3',   img: '' },
+  { id: 4, name: 'หมายเลข 4',   img: '' },
+  { id: 5, name: 'หมายเลข 5',   img: '' },
+];
+
 // ข้อมูลจำลอง (ใช้ตอนยังไม่มี Sheet)
 const MOCK_DATA = [
-  { id: 1, name: 'หมายเลข 1', score: 148, money: 1480, votes: 42 },
-  { id: 2, name: 'หมายเลข 2', score: 112, money: 1120, votes: 31 },
-  { id: 3, name: 'หมายเลข 3', score:  87, money:  870, votes: 24 },
-  { id: 4, name: 'หมายเลข 4', score:  53, money:  530, votes: 15 },
-  { id: 5, name: 'หมายเลข 5', score:  29, money:  290, votes:  9 },
+  { id: 1, score: 148, money: 1480, votes: 42 },
+  { id: 2, score: 112, money: 1120, votes: 31 },
+  { id: 3, score:  87, money:  870, votes: 24 },
+  { id: 4, score:  53, money:  530, votes: 15 },
+  { id: 5, score:  29, money:  290, votes:  9 },
 ];
 // ============================================================
 
@@ -331,7 +342,7 @@ function renderCards(data) {
 
   const rankClass = ['rank-1','rank-2','rank-3'];
   const medals    = ['🥇','🥈','🥉'];
-  const avatarColors = ['#F5C842','#B8C8D8','#D4956A','#7EB8F7','#A8E6A3'];
+  const candidateMap = Object.fromEntries(CANDIDATES.map(c => [c.id, c]));
 
   const container = document.getElementById('card-list');
   container.innerHTML = '';
@@ -340,16 +351,20 @@ function renderCards(data) {
     const cls  = rankClass[i] || 'rank-other';
     const pct  = Math.round((d.score / max) * 100);
     const icon = i < 3 ? medals[i] : (i + 1);
-    const col  = avatarColors[d.id - 1] || '#888';
+    const info = candidateMap[d.id] || { name: `หมายเลข ${d.id}`, img: '' };
+    const imgSrc = info.img || '';
+    const avatarEl = imgSrc
+      ? `<img class="avatar" src="${imgSrc}" alt="${info.name}" onerror="this.src='';this.style.background='rgba(240,237,230,0.1)'">`
+      : `<div class="avatar" style="display:flex;align-items:center;justify-content:center;font-family:Kanit,sans-serif;font-size:18px;font-weight:700;color:rgba(240,237,230,0.4)">${d.id}</div>`;
 
     const card = document.createElement('div');
     card.className = `candidate-card ${cls}`;
     card.innerHTML = `
       <div class="rank-num">${icon}</div>
-      <div class="avatar" style="${i>=3?'color:'+col:''}">No.${d.id}</div>
+      ${avatarEl}
       <div class="info">
-        <div class="name">${d.name}</div>
-        <div class="votes-txt">${d.votes.toLocaleString()} คน · ${d.money.toLocaleString()} บาท</div>
+        <div class="name">${info.name}</div>
+        <div class="votes-txt">หมายเลข ${d.id} · ${d.votes.toLocaleString()} คน · ${d.money.toLocaleString()} บาท</div>
         <div class="bar-wrap"><div class="bar" style="width:${pct}%"></div></div>
       </div>
       <div class="score-box">
@@ -396,7 +411,6 @@ async function loadFromSheet() {
       const cols = row.split(',').map(c => c.replace(/^"|"$/g, '').trim());
       return {
         id:    parseInt(cols[0]) || 0,
-        name:  cols[1] || '',
         score: parseFloat(cols[2]) || 0,
         money: parseFloat(cols[3]) || 0,
         votes: parseInt(cols[4])   || 0,
